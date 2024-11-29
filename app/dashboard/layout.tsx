@@ -18,10 +18,16 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
+import { fetchUserData } from "@/lib/fetch-user";
+import { logoutUser } from "@/lib/logout";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [user, setUser] = useState({ name: '', email: '' });
+    const router = useRouter();
+    const { toast } = useToast();
 
     const menuItems = [
         { icon: Dumbbell, label: "Workouts", href: "/dashboard/workouts" },
@@ -31,31 +37,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     ];
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            const token = localStorage.getItem("token")
-            try {
-                const response = await fetch('/api/get-user', {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch user data');
-                }
-                const data = await response.json();
-                setUser({ name: data.name, email: data.email });
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            };
-        }
-
-        fetchUserData();
+        const getUserData = async () => {
+            const userData = await fetchUserData();
+            setUser(userData);
+        };
+        getUserData();
     }, []);
+
+    const handleLogout = () => {
+        logoutUser();
+        setUser({ name: '', email: '' });
+        router.push('/');
+        toast({
+            variant: "default",
+            title: `You have been logged out.`,
+        });
+    };
+    
     return (
         <SidebarProvider>
-            <div className="flex h-screen">
+            <div className="flex w-full h-screen bg-background">
                 <Sidebar>
                     <SidebarHeader>
                         <div className="flex items-center gap-2 px-4 py-2">
@@ -96,10 +97,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             </SidebarMenuItem>
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <Link href="/logout">
+                                    <Button onClick={handleLogout}>
                                         <LogOut className="mr-2 h-4 w-4" />
                                         Logout
-                                    </Link>
+                                    </Button>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                         </SidebarMenu>
