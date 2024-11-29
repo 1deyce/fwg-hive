@@ -13,17 +13,52 @@ import {
     CardContent,
     CardFooter,
 } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
+    const { toast } = useToast();
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Here you would typically handle the login logic
-        // For this example, we'll just redirect to the dashboard
-        router.push("/dashboard");
+        const response = await fetch("/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+        })
+
+        const data = await response.json();
+        const token = data.token;
+
+        if (response.ok) {
+            router.push("/dashboard");
+            localStorage.setItem("token", token);
+            toast({
+                variant: "default",
+                title: `Login successful, welcome back ${data.name}.`,
+            });
+        } else {
+            console.error("An error occurred while logging in");
+            if (response.status === 400) {
+                toast({
+                    variant: "destructive",
+                    title: "User not found, please sign up first or try again",
+                    action: <ToastAction altText="Try again">Try again</ToastAction>,
+                });
+            } else if (response.status === 401) {
+                toast({
+                    variant: "destructive",
+                    title: "Invalid Password",
+                    description: "Please try again",
+                    action: <ToastAction altText="Try again">Try again</ToastAction>,
+                });
+            }
+        }
     };
 
     return (
@@ -34,7 +69,7 @@ export default function Login() {
                     <CardDescription>Enter your credentials to access your account</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleLogin}>
                         <div className="space-y-4">
                             <div>
                                 <Label htmlFor="email">Email</Label>

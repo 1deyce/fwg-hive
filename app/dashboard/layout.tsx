@@ -17,9 +17,11 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useEffect, useState } from "react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
+    const [user, setUser] = useState({ name: '', email: '' });
 
     const menuItems = [
         { icon: Dumbbell, label: "Workouts", href: "/dashboard/workouts" },
@@ -28,6 +30,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { icon: ShoppingBag, label: "Store", href: "/dashboard/store" },
     ];
 
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const token = localStorage.getItem("token")
+            try {
+                const response = await fetch('/api/get-user', {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                const data = await response.json();
+                setUser({ name: data.name, email: data.email });
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            };
+        }
+
+        fetchUserData();
+    }, []);
     return (
         <SidebarProvider>
             <div className="flex h-screen">
@@ -39,9 +64,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <AvatarFallback>K</AvatarFallback>
                             </Avatar>
                             <div>
-                                {/* TODO: User name */}
-                                <p className="font-semibold">John Doe</p>
-                                <p className="text-sm text-gray-500">john@example.com</p>
+                                <p className="font-semibold">{user.name}</p>
+                                <p className="text-sm text-gray-500">{user.email}</p>
                             </div>
                         </div>
                     </SidebarHeader>
