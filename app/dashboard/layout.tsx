@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Dumbbell, Utensils, Trophy, User, LogOut, ShoppingBag } from "lucide-react";
+import { Dumbbell, Utensils, Trophy, User, User2, LogOut, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -25,7 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const [user, setUser] = useState({ name: '', email: '' });
+    const [user, setUser] = useState({ name: "", email: "" });
     const router = useRouter();
     const { toast } = useToast();
 
@@ -39,6 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     useEffect(() => {
         const getUserData = async () => {
             const userData = await fetchUserData();
+            // console.log(userData);
             setUser(userData);
         };
         getUserData();
@@ -46,23 +47,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     const handleLogout = () => {
         logoutUser();
-        setUser({ name: '', email: '' });
-        router.push('/');
+        setUser({ name: "", email: "" });
+        router.push("/");
         toast({
             variant: "default",
             title: `You have been logged out.`,
         });
     };
-    
+
     return (
         <SidebarProvider>
             <div className="flex w-full h-screen bg-background">
-                <Sidebar>
+                <Sidebar className="bg-background">
                     <SidebarHeader>
                         <div className="flex items-center gap-2 px-4 py-2">
                             <Avatar>
                                 <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
-                                <AvatarFallback>K</AvatarFallback>
+                                <AvatarFallback>
+                                    <User2 />
+                                </AvatarFallback>
                             </Avatar>
                             <div>
                                 <p className="font-semibold">{user.name}</p>
@@ -97,7 +100,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             </SidebarMenuItem>
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <Button onClick={handleLogout}>
+                                    <Button onClick={handleLogout} variant={'default'}>
                                         <LogOut className="mr-2 h-4 w-4" />
                                         Logout
                                     </Button>
@@ -107,7 +110,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </SidebarFooter>
                 </Sidebar>
                 <div className="flex-1 overflow-auto">
-                    <header className="bg-white shadow">
+                    <header className="bg-background shadow">
                         <div className="flex items-center justify-between px-4 py-4">
                             <SidebarTrigger />
                             <h1 className="text-2xl font-semibold">Dashboard</h1>

@@ -33,7 +33,7 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        return NextResponse.json({ name: user.name, email: user.email }, { status: 200 });
+        return NextResponse.json({ _id: userId, name: user.name, email: user.email }, { status: 200 });
     } catch (error) {
         console.error(error);
         return NextResponse.json(

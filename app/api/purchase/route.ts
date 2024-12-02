@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
+import jwt from "jsonwebtoken";
+import { ObjectId } from "mongodb";
 
 export async function POST(request: Request) {
     try {
@@ -7,16 +9,35 @@ export async function POST(request: Request) {
         const client = await clientPromise;
         const db = client.db("fitnessHub");
 
-        // In a real application, you would verify the user's session here
-        // For this example, we'll use a placeholder user ID
-        const userId = "placeholder_user_id";
+        // Get the user ID by calling the get-user route
+        const authHeader = request.headers.get("Authorization");
+        if (!authHeader) {
+            return NextResponse.json({ error: "Authorization header missing" }, { status: 401 });
+        }
 
-        // Record the purchase
+        const token = authHeader.split(" ")[1];
+        if (!token) {
+            return NextResponse.json({ error: "Token missing" }, { status: 401 });
+        }
+
+        let userId: string;
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            userId = decoded.userId;
+        } catch (err) {
+            return NextResponse.json({ error: "Invalid token" }, { status: 403 });
+        }
+
         const result = await db.collection("purchases").insertOne({
             userId,
             itemId,
             purchaseDate: new Date(),
         });
+
+        await db.collection("users").updateOne(
+            { _id: new ObjectId(userId) },
+            { $addToSet: { purchasedItems: itemId } }  // Use $push if you want duplicates, $addToSet prevents duplicates
+        );
 
         return NextResponse.json(
             { message: "Purchase successful", purchaseId: result.insertedId },

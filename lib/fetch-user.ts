@@ -12,9 +12,9 @@ export const fetchUserData = async () => {
             throw new Error('Failed to fetch user data');
         }
         const data = await response.json();
-        return { name: data.name, email: data.email }; // Return the user data
+        return { _id: data._id, name: data.name, email: data.email };
     } catch (error) {
         console.error("Error fetching user data:", error);
-        return { name: '', email: '' }; // Return default values on error
+        return { name: '', email: '' };
     }
 };
