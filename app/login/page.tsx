@@ -15,12 +15,14 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import useUserStore from "@/zustand/store/userStore";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
     const { toast } = useToast();
+    const setUser = useUserStore((state) => state.setUser);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,8 +38,9 @@ export default function Login() {
         const token = data.token;
 
         if (response.ok) {
-            router.push("/dashboard");
             localStorage.setItem("token", token);
+            setUser(data);
+            router.push("/dashboard");
             toast({
                 variant: "default",
                 title: `Login successful, welcome back ${data.name}.`,
@@ -65,7 +68,7 @@ export default function Login() {
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle>Login to Fitness Hub</CardTitle>
+                    <CardTitle>Login to FWG HIVE</CardTitle>
                     <CardDescription>Enter your credentials to access your account</CardDescription>
                 </CardHeader>
                 <CardContent>

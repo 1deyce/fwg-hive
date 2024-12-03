@@ -19,7 +19,10 @@ export async function GET(request: Request) {
 
         let userId: string;
         try {
-            const decoded = jwt.verify(token, JWT_SECRET);
+            if (!JWT_SECRET) {
+                throw new Error("JWT_SECRET is not defined");
+            }
+            const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
             userId = decoded.userId;
         } catch (err) {
             return NextResponse.json({ error: "Invalid token" }, { status: 403 });

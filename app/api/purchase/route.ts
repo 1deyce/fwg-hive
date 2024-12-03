@@ -3,6 +3,8 @@ import clientPromise from "@/lib/mongodb";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
 export async function POST(request: Request) {
     try {
         const { itemId } = await request.json();
@@ -22,7 +24,10 @@ export async function POST(request: Request) {
 
         let userId: string;
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            if (!JWT_SECRET) {
+                throw new Error("JWT_SECRET is not defined");
+            }
+            const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
             userId = decoded.userId;
         } catch (err) {
             return NextResponse.json({ error: "Invalid token" }, { status: 403 });

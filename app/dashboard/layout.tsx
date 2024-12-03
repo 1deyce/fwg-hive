@@ -100,7 +100,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             </SidebarMenuItem>
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <Button onClick={handleLogout} variant={'default'}>
+                                    <Button onClick={handleLogout} variant={"default"}>
                                         <LogOut className="mr-2 h-4 w-4" />
                                         Logout
                                     </Button>

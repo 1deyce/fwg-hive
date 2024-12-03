@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import clientPromise from "@/lib/mongodb";
+import { redirect } from "next/navigation";
 
 async function getPurchasedItems(userId: string) {
     const client = await clientPromise;
@@ -8,17 +9,18 @@ async function getPurchasedItems(userId: string) {
     return purchases.map((purchase) => purchase.itemId);
 }
 
-export default async function Dashboard() {
-    // In a real application, you would get the user ID from the session
-    const userId = "placeholder_user_id";
-    const purchasedItems = await getPurchasedItems(userId);
+export default async function Dashboard({ searchParams }) {
+    const params = await searchParams;
+    const userId = params.userId;
+    console.log("User ID from URL: ", userId);
 
-    const items = [
-        { id: 1, name: "Premium Workout Plan" },
-        { id: 2, name: "Nutrition Guide" },
-        { id: 3, name: "Fitness Tracker Pro" },
-        { id: 4, name: "Personal Trainer Sessions" },
-    ];
+    // if (!userId) {
+    //     redirect('/login');
+    // }
+
+    const purchasedItems = await getPurchasedItems(userId);
+    console.log("Purchased items: ", purchasedItems);
+
 
     return (
         <div className="space-y-6">
@@ -64,7 +66,7 @@ export default async function Dashboard() {
             <div>
                 <h2 className="text-2xl font-bold mb-4">Your Purchased Items</h2>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {items
+                    {purchasedItems
                         .filter((item) => purchasedItems.includes(item.id))
                         .map((item) => (
                             <Card key={item.id}>
