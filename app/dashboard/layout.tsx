@@ -17,16 +17,17 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useEffect, useState } from "react";
-import { fetchUserData } from "@/lib/fetch-user";
 import useLogout from "@/lib/logout";
 import { useToast } from "@/hooks/use-toast";
+import useUserStore from "@/zustand/store/userStore";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const [user, setUser] = useState({ name: "", email: "" });
     const logout = useLogout();
     const { toast } = useToast();
+    const { getUser, clearUser } = useUserStore();
+
+    const user = getUser();
 
     const menuItems = [
         { icon: Dumbbell, label: "Workouts", href: "/dashboard/workouts" },
@@ -35,18 +36,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { icon: ShoppingBag, label: "Store", href: "/dashboard/store" },
     ];
 
-    useEffect(() => {
-        const getUserData = async () => {
-            const userData = await fetchUserData();
-            // console.log(userData);
-            setUser(userData);
-        };
-        getUserData();
-    }, []);
-
     const handleLogout = () => {
         logout();
-        setUser({ name: "", email: "" });
+        clearUser();
         toast({
             variant: "default",
             title: `You have been logged out.`,
@@ -66,8 +58,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 </AvatarFallback>
                             </Avatar>
                             <div>
-                                <p className="font-semibold">{user.name}</p>
-                                <p className="text-sm text-gray-500">{user.email}</p>
+                                <p className="font-semibold">{user?.name}</p>
+                                <p className="text-sm text-gray-500">{user?.email}</p>
                             </div>
                         </div>
                     </SidebarHeader>

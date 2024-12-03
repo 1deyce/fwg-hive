@@ -37,6 +37,7 @@ export async function POST(request: Request) {
             message: "Login successful",
             userId: existingUser._id,
             name: existingUser.name,
+            email: existingUser.email,
             token,
         }, { status: 200 });
 

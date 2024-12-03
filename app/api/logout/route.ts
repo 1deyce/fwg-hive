@@ -1,7 +1,7 @@
 import { serialize } from "cookie";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST() {
     const res = NextResponse.json({ message: "Logged out successfully" });
     
     res.headers.set("Set-Cookie", serialize("token", "", {
