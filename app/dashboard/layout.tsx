@@ -19,14 +19,13 @@ import {
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 import { fetchUserData } from "@/lib/fetch-user";
-import { logoutUser } from "@/lib/logout";
-import { useRouter } from "next/navigation";
+import useLogout from "@/lib/logout";
 import { useToast } from "@/hooks/use-toast";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [user, setUser] = useState({ name: "", email: "" });
-    const router = useRouter();
+    const logout = useLogout();
     const { toast } = useToast();
 
     const menuItems = [
@@ -46,9 +45,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }, []);
 
     const handleLogout = () => {
-        logoutUser();
+        logout();
         setUser({ name: "", email: "" });
-        router.push("/");
         toast({
             variant: "default",
             title: `You have been logged out.`,

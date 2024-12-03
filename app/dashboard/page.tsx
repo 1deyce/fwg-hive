@@ -1,26 +1,40 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import clientPromise from "@/lib/mongodb";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import jwt from "jsonwebtoken";
+import { getPurchasedItems } from "@/lib/get-purchasedItems";
 
-async function getPurchasedItems(userId: string) {
-    const client = await clientPromise;
-    const db = client.db("fitnessHub");
-    const purchases = await db.collection("purchases").find({ userId }).toArray();
-    return purchases.map((purchase) => purchase.itemId);
-}
+const JWT_SECRET = process.env.JWT_SECRET;
 
-export default async function Dashboard({ searchParams }) {
-    const params = await searchParams;
-    const userId = params.userId;
-    console.log("User ID from URL: ", userId);
+export default async function Dashboard() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
 
-    // if (!userId) {
-    //     redirect('/login');
-    // }
+    if (!token) {
+        redirect('/login');
+    }
+
+    let userId: string;
+
+    try {
+        if (!JWT_SECRET) {
+            return new Error("Invalid jwt secret");
+        }
+        const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
+        userId = decoded.userId;
+    } catch (error) {
+        console.error("Token verification failed: ", error);
+        redirect('/login');
+    }
+
+    console.log("User ID from token: ", userId);
+
+    if (!userId) {
+        redirect('/login');
+    }
 
     const purchasedItems = await getPurchasedItems(userId);
     console.log("Purchased items: ", purchasedItems);
-
 
     return (
         <div className="space-y-6">

@@ -41,12 +41,12 @@ export async function middleware(req: NextRequest) {
     // If token is valid and trying to access login, redirect to dashboard
     if (pathname === "/login") {
         const dashboardUrl = new NextURL("/dashboard", req.url);
+        if (userId) {
+            req.nextUrl.searchParams.set('userId', userId);
+        }
         return NextResponse.redirect(dashboardUrl);
     }
 
-    if (userId) {
-        req.nextUrl.searchParams.set('userId', userId);
-    }
     return NextResponse.next();
 }
 
