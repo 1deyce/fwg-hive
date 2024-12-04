@@ -63,6 +63,7 @@ export default function Profile() {
                                 }}
                                 className="ut-button:bg-background ut-button:ut-readying:bg-teal-600"
                             />
+                            {/* TODO: add fetch avatar logic in dashboard/layout */}
                         </div>
                     </form>
                 </CardContent>
