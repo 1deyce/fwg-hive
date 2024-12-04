@@ -7,6 +7,7 @@ interface User {
     id: string;
     name: string;
     email: string;
+    avatar: string;
 }
 
 interface UserState {
@@ -20,6 +21,8 @@ const getUserFromLocalStorage = (): User | null => {
     const user = localStorage.getItem("user");
     return user ? JSON.parse(user) : null;
 };
+
+// TODO: fix internal server error 500 - "localStorage is not defined"
 
 const persistUserToLocalStorage = (user: User | null) => {
     if (user) {

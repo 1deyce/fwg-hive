@@ -4,8 +4,8 @@ import { NextURL } from "next/dist/server/web/next-url";
 import { jwtVerify } from "jose";
 
 interface JWTUserPayload {
-    userId: string; // Define the expected property
-    name: string; // Add other properties if present
+    userId: string;
+    name: string;
 }
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -38,7 +38,6 @@ export async function middleware(req: NextRequest) {
         return NextResponse.next();
     }
 
-    // If token is valid and trying to access login, redirect to dashboard
     if (pathname === "/login") {
         const dashboardUrl = new NextURL("/dashboard", req.url);
         if (userId) {

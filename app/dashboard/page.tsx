@@ -1,10 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import jwt from "jsonwebtoken";
 import { getPurchasedItems } from "@/lib/get-purchasedItems";
-
-const JWT_SECRET = process.env.JWT_SECRET;
+import { verifyToken } from "@/lib/verify-token";;
 
 export default async function Dashboard() {
     const cookieStore = await cookies();
@@ -17,17 +15,16 @@ export default async function Dashboard() {
     let userId: string;
 
     try {
-        if (!JWT_SECRET) {
-            return new Error("Invalid jwt secret");
+        const user = await verifyToken(token);
+        if (!user) {
+            throw new Error("No user found")
         }
-        const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
-        userId = decoded.userId;
+        userId = user.userId;
+        console.log("User ID from token: ", userId);
     } catch (error) {
         console.error("Token verification failed: ", error);
         redirect('/login');
     }
-
-    console.log("User ID from token: ", userId);
 
     if (!userId) {
         redirect('/login');

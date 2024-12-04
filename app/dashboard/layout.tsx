@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Dumbbell, Utensils, Trophy, User, User2, LogOut, ShoppingBag } from "lucide-react";
+import {
+    Dumbbell,
+    Utensils,
+    Trophy,
+    User,
+    User2,
+    LogOut,
+    ShoppingBag,
+    LayoutDashboard,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -30,6 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const user = getUser();
 
     const menuItems = [
+        { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
         { icon: Dumbbell, label: "Workouts", href: "/dashboard/workouts" },
         { icon: Trophy, label: "Challenges", href: "/dashboard/challenges" },
         { icon: Utensils, label: "Meal Plans", href: "/dashboard/meal-plans" },
@@ -52,7 +62,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <SidebarHeader>
                         <div className="flex items-center gap-2 px-4 py-2">
                             <Avatar>
-                                <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
+                                <AvatarImage src={user?.avatar} alt="User" />
                                 <AvatarFallback>
                                     <User2 />
                                 </AvatarFallback>

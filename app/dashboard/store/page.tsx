@@ -38,19 +38,19 @@ export default function Store() {
         // In a real application, you would integrate with a payment gateway here
         // For this example, we'll simulate a successful purchase
         try {
-            const response = await fetch("'/api/purchase'", {
-                method: "'POST'",
-                headers: { "'Content-Type'": "'application/json'" },
+            const response = await fetch("/api/purchase", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ itemId }),
             });
 
             if (response.ok) {
                 setPurchasedItems([...purchasedItems, itemId]);
             } else {
-                console.error("'Purchase failed'");
+                console.error("Purchase failed");
             }
         } catch (error) {
-            console.error("'Error during purchase:'", error);
+            console.error("Error during purchase:", error);
         }
     };
 
@@ -70,7 +70,7 @@ export default function Store() {
                                 onClick={() => handlePurchase(item.id)}
                                 disabled={purchasedItems.includes(item.id)}
                             >
-                                {purchasedItems.includes(item.id) ? "'Purchased'" : "'Buy Now'"}
+                                {purchasedItems.includes(item.id) ? "View" : "Buy Now"}
                             </Button>
                         </CardContent>
                     </Card>
