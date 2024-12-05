@@ -25,7 +25,7 @@ export async function GET(request: Request) {
             const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
             userId = decoded.userId;
         } catch (err) {
-            return NextResponse.json({ error: "Invalid token" }, { status: 403 });
+            return NextResponse.json({ error: "Invalid token", err }, { status: 403 });
         }
 
         const client = await clientPromise;

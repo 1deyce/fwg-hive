@@ -5,15 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
-import { UploadDropzone } from "@uploadthing/react";
-import type { OurFileRouter } from "../../api/uploadthing/core";
+import UploadAvatar from "./uploadAvatar";
 import useUserStore from "@/zustand/store/userStore";
 
 export default function Profile() {
     const { getUser } = useUserStore();
     const user = getUser();
-    const { toast } = useToast();
 
     return (
         <div>
@@ -27,7 +24,7 @@ export default function Profile() {
                         <div className="flex flex-col space-y-6 basis-1/2">
                             <div>
                                 <Label htmlFor="name">Name</Label>
-                                <Input id="name" defaultValue={user?.name} />
+                                <Input id="name" defaultValue={user?.name} /> 
                             </div>
                             <div>
                                 <Label htmlFor="email">Email</Label>
@@ -51,18 +48,7 @@ export default function Profile() {
                         </div>
                         <Separator orientation="vertical" className="bg-background" />
                         <div className="flex basis-1/2 justify-center">
-                            <UploadDropzone<OurFileRouter, "avatar">
-                                endpoint="avatar"
-                                onClientUploadComplete={(res) => {
-                                    console.log("Upload complete:", res);
-                                    toast({
-                                        title: "Avatar uploaded successfully",
-                                        description: "Your avatar has been updated.",
-                                        variant: "default",
-                                    })
-                                }}
-                                className="ut-button:bg-background ut-button:ut-readying:bg-teal-600"
-                            />
+                            <UploadAvatar />
                             {/* TODO: add fetch avatar logic in dashboard/layout */}
                         </div>
                     </form>

@@ -46,9 +46,13 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(dashboardUrl);
     }
 
+    if (pathname.startsWith('/api/uploadthing')) {
+        return NextResponse.next();
+    }
+
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/dashboard/:path*"],
+    matcher: ["/dashboard/:path*", "/api/uploadthing/:path*"],
 };

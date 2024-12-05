@@ -66,7 +66,7 @@ export default async function Dashboard() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Meal Plan Adherence</CardTitle>
-                        <CardDescription>This week's meal plan progress</CardDescription>
+                        <CardDescription>This week&apos;s meal plan progress</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <p className="text-3xl font-bold">85%</p>

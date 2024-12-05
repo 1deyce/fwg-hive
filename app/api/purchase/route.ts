@@ -30,7 +30,7 @@ export async function POST(request: Request) {
             const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
             userId = decoded.userId;
         } catch (err) {
-            return NextResponse.json({ error: "Invalid token" }, { status: 403 });
+            return NextResponse.json({ error: "Invalid token", err }, { status: 403 });
         }
 
         const result = await db.collection("purchases").insertOne({
