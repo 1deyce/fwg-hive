@@ -49,7 +49,6 @@ export default function Profile() {
                         <Separator orientation="vertical" className="bg-background" />
                         <div className="flex basis-1/2 justify-center">
                             <UploadAvatar />
-                            {/* TODO: add fetch avatar logic in dashboard/layout */}
                         </div>
                     </form>
                 </CardContent>
