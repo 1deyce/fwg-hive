@@ -13,12 +13,14 @@ import {
     CardContent,
     CardFooter,
 } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Signup() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
+    const { toast } = useToast();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,9 +31,16 @@ export default function Signup() {
         });
 
         if (response.ok) {
+            toast({
+                variant: "default",
+                title: "Signup successful. You can now log in.",
+            });
             router.push("/login");
         } else {
-            // Handle errors (e.g., show an error message)
+            toast({
+                variant: "destructive",
+                title: "An error occurred while signing up. Please try again.",
+            });
             console.error("Signup failed");
         }
     };
@@ -40,7 +49,7 @@ export default function Signup() {
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle>Sign Up for Fitness Hub</CardTitle>
+                    <CardTitle>Sign Up for FWG Hive</CardTitle>
                     <CardDescription>
                         Create your account to start your fitness journey
                     </CardDescription>
