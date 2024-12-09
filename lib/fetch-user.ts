@@ -1,3 +1,5 @@
+"use client"
+
 export const fetchUserData = async () => {
     const token = localStorage.getItem("token");
     try {

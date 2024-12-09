@@ -5,15 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-// import UploadAvatar from "./uploadAvatar";
 import useUserStore from "@/zustand/store/userStore";
-import { UploadDropzone } from "@/utils/uploadthing";
-import { useToast } from "@/hooks/use-toast";
+import UploadAvatar from "./uploadAvatar";
+// import { useToast } from "@/hooks/use-toast";
 
 export default function Profile() {
     const { getUser } = useUserStore();
     const user = getUser();
-    const { toast } = useToast();
+    // const { toast } = useToast();
 
     return (
         <div>
@@ -24,7 +23,7 @@ export default function Profile() {
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col">
-                        <div className="flex flex-col space-y-6 basis-1/2">
+                        <div className="flex  space-y-6 basis-1/2">
                             <form className="flex space-y-4">
                                     <div>
                                         <Label htmlFor="name">Name</Label>
@@ -52,18 +51,8 @@ export default function Profile() {
                                 <Separator orientation="vertical" className="bg-background" />
                             </form>
                         </div>
-                        <div className="flex basis-1/2 justify-center bg-black">
-                            <UploadDropzone
-                                endpoint="avatar"
-                                onClientUploadComplete={(res) => {
-                                    console.log(res)
-                                    toast({
-                                        title: "Avatar uploaded successfully",
-                                        description: "avatar has been updated.",
-                                        variant: "default"
-                                    })
-                                }}
-                            />
+                        <div className="flex basis-1/2 justify-center bg-white">
+                            <UploadAvatar />
                         </div>
                     </div>
                 </CardContent>

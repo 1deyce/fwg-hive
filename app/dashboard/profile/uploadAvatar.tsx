@@ -1,48 +1,49 @@
-// "use client";
+import {
+    CldUploadWidget,
+    CloudinaryUploadWidgetInfo,
+    CloudinaryUploadWidgetResults,
+} from "next-cloudinary";
+import { Button } from "@/components/ui/button";
 
-// import { Button } from "@/components/ui/button";
-// import { useToast } from "@/hooks/use-toast";
-// import { useState } from "react";
-// import useUserStore from "@/zustand/store/userStore";
-// import { uploadFile } from "@/app/actions";
+export default function UploadAvatar() {
+    const handleUpload = (results: CloudinaryUploadWidgetResults) => {
+        if (results.info && typeof results.info === "object") {
+            const publicId = (results.info as CloudinaryUploadWidgetInfo).public_id;
+            if (publicId) {
+                saveImageUrlToDatabase(publicId);
+            }
+        }
+    };
 
-// export default function UploadAvatar() {
-//     const [avatar, setAvatar] = useState<File[] | null>(null);
-//     const { toast } = useToast();
-//     const { getUser } = useUserStore();
-//     const user = getUser();
+    const saveImageUrlToDatabase = async (publicId: string) => {
+        try {
+            const response = await fetch("/api/save-image", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ publicId }),
+            });
 
-//     if (!user) throw new Error("User not found for avatar upload");
+            if (!response.ok) {
+                throw new Error("Failed to save image URL");
+            }
 
-//     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//         const files = event.target.files;
-//         if (files && files.length > 0) {
-//             const file = files[0];
-//             setAvatar([file]);
-//             console.log("Files selected:", file);
-//         } else {
-//             setAvatar(null);
-//         }
-//     };
+            const data = await response.json();
+            console.log(data)
+            console.log("Image URL saved successfully:", data);
+        } catch (error) {
+            console.error("Error saving image URL:", error);
+        }
+    };
 
-//     return (
-//         <div>
-//             <form action={uploadFile}>
-//                 <input
-//                     name="file"
-//                     type="file"
-//                     accept="image/*"
-//                     onChange={handleFileChange}
-//                     className="border border-dashed border-gray-500 p-2"
-//                 />
-//                 <input type="hidden" name="userId" value={user.userId} />
-//                 {/* <div className="h-48">
-//                     {avatar ? <p>{avatar.name}</p> : <p>No file uploaded</p>}
-//                 </div> */}
-//                 <Button type="submit" className="mt-4">
-//                     Upload Avatar
-//                 </Button>
-//             </form>
-//         </div>
-//     );
-// }
+    return (
+        <div>
+            <CldUploadWidget uploadPreset="avatars" onSuccess={handleUpload}>
+                {({ open }) => {
+                    return <Button onClick={() => open()}>Upload an Image</Button>;
+                }}
+            </CldUploadWidget>
+        </div>
+    );
+}
