@@ -46,6 +46,10 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(dashboardUrl);
     }
 
+    if (pathname.startsWith("/api/uploadFile")) {
+        return NextResponse.next();
+    }
+
     if (pathname.startsWith('/api/uploadthing')) {
         return NextResponse.next();
     }
