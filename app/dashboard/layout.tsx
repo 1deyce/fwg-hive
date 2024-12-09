@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getCldImageUrl } from "next-cloudinary";
 import { Separator } from "@/components/ui/separator";
 import {
     Sidebar,
@@ -55,6 +56,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         });
     };
 
+    let avatar: string;
+    try {
+        avatar = getCldImageUrl({
+            src: user?.avatarUrl || '',
+            width: 300,
+            height: 300,
+            crop: "fill",
+        });
+    } catch (error) {
+        console.error("Error constructing Cloudinary URL:", error);
+        avatar = `${<User2 />}`;
+    }
+
+    console.log(avatar);
+
     return (
         <SidebarProvider>
             <div className="flex w-full h-screen bg-background">
@@ -62,10 +78,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <SidebarHeader>
                         <div className="flex items-center gap-2 px-4 py-2">
                             <Avatar>
-                                <AvatarImage src={user?.avatar} alt="User" />
-                                <AvatarFallback>
-                                    <User2 />
-                                </AvatarFallback>
+                                {avatar ? (
+                                    <AvatarImage src={avatar} alt="User" />
+                                ) : (
+                                    <AvatarFallback>
+                                        <User2 />
+                                    </AvatarFallback>
+                                )}
                             </Avatar>
                             <div>
                                 <p className="font-semibold">{user?.name}</p>

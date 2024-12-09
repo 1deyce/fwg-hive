@@ -7,7 +7,7 @@ interface User {
     userId: string;
     name: string;
     email: string;
-    avatar: string;
+    avatarUrl: string;
 }
 
 interface UserState {
