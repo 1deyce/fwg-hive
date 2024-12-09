@@ -59,7 +59,7 @@ export default function Profile() {
                                     console.log(res)
                                     toast({
                                         title: "Avatar uploaded successfully",
-                                        description: "Your avatar has been updated.",
+                                        description: "avatar has been updated.",
                                         variant: "default"
                                     })
                                 }}
