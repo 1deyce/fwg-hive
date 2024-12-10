@@ -3,11 +3,12 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-interface User {
+export interface User {
     userId: string;
     name: string;
     email: string;
     avatarUrl: string;
+    purchasedItems: string[];
 }
 
 interface UserState {

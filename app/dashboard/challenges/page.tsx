@@ -9,6 +9,8 @@ export default function Challenges() {
         { id: 4, name: "'Healthy Eating Challenge'", participants: 1200, duration: "'21 days'" },
     ];
 
+    // TODO: Add fetch logic
+
     return (
         <div>
             <h2 className="text-2xl font-bold mb-4">Fitness Challenges</h2>

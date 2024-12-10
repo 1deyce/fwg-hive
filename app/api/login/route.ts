@@ -39,6 +39,7 @@ export async function POST(request: Request) {
             name: existingUser.name,
             email: existingUser.email,
             avatarUrl: existingUser.avatarUrl,
+            purchasedItems: existingUser.purchasedItems,
             token,
         }, { status: 200 });
 

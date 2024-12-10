@@ -9,6 +9,8 @@ export default function MealPlans() {
         { id: 4, name: "'Balanced Nutrition'", calories: 2200, meals: 4 },
     ];
 
+    // TODO: Add fetch logic
+
     return (
         <div>
             <h2 className="text-2xl font-bold mb-4">Meal Plans</h2>

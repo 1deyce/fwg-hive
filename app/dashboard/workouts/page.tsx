@@ -9,6 +9,8 @@ export default function Workouts() {
         { id: 4, name: "'Core Crusher'", duration: "'20 min'", difficulty: "'Intermediate'" },
     ];
 
+    // TODO: Add fetch logic
+
     return (
         <div>
             <h2 className="text-2xl font-bold mb-4">Your Workouts</h2>

@@ -1,52 +1,88 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import useUserStore from "@/zustand/store/userStore";
+import { User } from "@/zustand/store/userStore";
+import { useToast } from "@/hooks/use-toast";
+import Image from "next/image";
 
-const items = [
-    {
-        id: 1,
-        name: "'Premium Workout Plan'",
-        price: 29.99,
-        description: "'Access to exclusive workout routines'",
-    },
-    {
-        id: 2,
-        name: "'Nutrition Guide'",
-        price: 19.99,
-        description: "'Comprehensive meal planning and recipes'",
-    },
-    {
-        id: 3,
-        name: "'Fitness Tracker Pro'",
-        price: 39.99,
-        description: "'Advanced progress tracking and analytics'",
-    },
-    {
-        id: 4,
-        name: "'Personal Trainer Sessions'",
-        price: 99.99,
-        description: "'5 one-on-one virtual training sessions'",
-    },
-];
+interface Item {
+    _id: string;
+    name: string;
+    price: string;
+    description: string;
+    accessUrl: string;
+    imgSrc: string;
+    imgAlt: string;
+}
 
 export default function Store() {
-    const [purchasedItems, setPurchasedItems] = useState<number[]>([]);
+    const [items, setItems] = useState<Item[]>([]);
+    const { getUser, setUser } = useUserStore();
+    const user = getUser();
+    const { toast } = useToast();
 
-    const handlePurchase = async (itemId: number) => {
-        // In a real application, you would integrate with a payment gateway here
-        // For this example, we'll simulate a successful purchase
+    const fetchStoreItems = async () => {
+        const response = await fetch("/api/get-store-items", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            console.error("Failed to fetch store items");
+            return;
+        }
+
+        const data: Item[] = await response.json();
+        console.log("Store items fetched successfully:", data);
+        setItems(data);
+    };
+    useEffect(() => {
+        fetchStoreItems();
+    }, []);
+
+    const handlePurchase = async (itemId: string) => {
+        if (!user) {
+            console.error("User not found");
+            return;
+        }
+        const userId = user.userId;
+
         try {
             const response = await fetch("/api/purchase", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ itemId }),
+                body: JSON.stringify({ itemId, userId }),
             });
 
             if (response.ok) {
-                setPurchasedItems([...purchasedItems, itemId]);
+                const updatedPurchasedItems = [...(user.purchasedItems || []), itemId];
+
+                const updatedUser: User = {
+                    userId: user.userId,
+                    name: user.name,
+                    email: user.email,
+                    avatarUrl: user.avatarUrl,
+                    purchasedItems: updatedPurchasedItems,
+                };
+                console.log("Purchase successful:", updatedUser);
+                toast({
+                    variant: "default",
+                    title: "Purchase successful",
+                    description: `You have purchased ${items}`,
+                    duration: 5000,
+                });
+
+                setUser(updatedUser);
             } else {
+                toast({
+                    variant: "destructive",
+                    title: "You have already purchased this product.",
+                });
                 console.error("Purchase failed");
             }
         } catch (error) {
@@ -56,21 +92,29 @@ export default function Store() {
 
     return (
         <div>
-            <h2 className="text-2xl font-bold mb-4">Fitness Hub Store</h2>
+            <h2 className="text-2xl font-bold mb-6">Shop FWG</h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {items.map((item) => (
-                    <Card key={item.id}>
-                        <CardHeader>
-                            <CardTitle>{item.name}</CardTitle>
-                            <CardDescription>${item.price.toFixed(2)}</CardDescription>
+                    <Card key={item._id} className="w-[300px]">
+                        <CardHeader className="text-center">
+                            <CardTitle className="text-lg">{item.name}</CardTitle>
+
                         </CardHeader>
-                        <CardContent>
-                            <p className="mb-4">{item.description}</p>
+                        <CardContent className="text-center flex flex-col items-center">
+                            <Image
+                                src={item.imgSrc}
+                                alt={item.imgAlt}
+                                width={150}
+                                height={10}
+                                className="rounded-sm"
+                            />
+                            <p className="my-4 text-sm">{item.description}</p>
+                            <CardDescription className="text-lg text-teal-600 mb-3">R{item.price}</CardDescription>
                             <Button
-                                onClick={() => handlePurchase(item.id)}
-                                disabled={purchasedItems.includes(item.id)}
+                                onClick={() => handlePurchase(item._id)}
+                                disabled={user?.purchasedItems?.includes(item._id)}
                             >
-                                {purchasedItems.includes(item.id) ? "View" : "Buy Now"}
+                                Buy Now
                             </Button>
                         </CardContent>
                     </Card>

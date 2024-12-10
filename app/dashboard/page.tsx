@@ -2,14 +2,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getPurchasedItems } from "@/lib/get-purchasedItems";
-import { verifyToken } from "@/lib/verify-token";;
+import { verifyToken } from "@/lib/verify-token";
+import Image from "next/image";
 
 export default async function Dashboard() {
     const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;
+    const token = cookieStore.get("token")?.value;
 
     if (!token) {
-        redirect('/login');
+        redirect("/login");
     }
 
     let userId: string;
@@ -17,21 +18,19 @@ export default async function Dashboard() {
     try {
         const user = await verifyToken(token);
         if (!user) {
-            throw new Error("No user found")
+            throw new Error("No user found");
         }
         userId = user.userId;
-        console.log("User ID from token: ", userId);
     } catch (error) {
         console.error("Token verification failed: ", error);
-        redirect('/login');
+        redirect("/login");
     }
 
     if (!userId) {
-        redirect('/login');
+        redirect("/login");
     }
 
     const purchasedItems = await getPurchasedItems(userId);
-    console.log("Purchased items: ", purchasedItems);
 
     return (
         <div className="space-y-6">
@@ -77,18 +76,23 @@ export default async function Dashboard() {
             <div>
                 <h2 className="text-2xl font-bold mb-4">Your Purchased Items</h2>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {purchasedItems
-                        .filter((item) => purchasedItems.includes(item.id))
-                        .map((item) => (
-                            <Card key={item.id}>
-                                <CardHeader>
-                                    <CardTitle>{item.name}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p>Access your purchased content here</p>
-                                </CardContent>
-                            </Card>
-                        ))}
+                    {purchasedItems.map((item) => (
+                        <Card key={item._id}>
+                            <CardHeader>
+                                <CardTitle>{item.name}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Image
+                                    src={item.imgSrc}
+                                    alt={item.imgAlt}
+                                    width={200}
+                                    height={100}
+                                    className="rounded-md"
+                                />
+                                {/* <p>{item.description}</p> */}
+                            </CardContent>
+                        </Card>
+                    ))}
                 </div>
             </div>
         </div>
