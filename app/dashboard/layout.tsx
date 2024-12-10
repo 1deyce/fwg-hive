@@ -69,8 +69,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         avatar = `${<User2 />}`;
     }
 
-    console.log(avatar);
-
     return (
         <SidebarProvider>
             <div className="flex w-full h-screen bg-background">

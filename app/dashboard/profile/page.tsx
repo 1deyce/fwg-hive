@@ -7,12 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useUserStore from "@/zustand/store/userStore";
 import UploadAvatar from "./uploadAvatar";
-// import { useToast } from "@/hooks/use-toast";
 
 export default function Profile() {
     const { getUser } = useUserStore();
     const user = getUser();
-    // const { toast } = useToast();
 
     return (
         <div>
