@@ -9,6 +9,8 @@ import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { Item } from "@/lib/fetch-storeItems";
 import { fetchStoreItems } from "@/lib/fetch-storeItems";
+import Paystack from "@paystack/inline-js";
+const popup = new Paystack();
 
 export default function Store() {
     const [items, setItems] = useState<Item[]>([]);
@@ -24,55 +26,110 @@ export default function Store() {
                 setItems(fetchedItems);
             } catch (error) {
                 console.error("Failed to fetch store items:", error);
-                toast({ title: "Error fetching items", description: "Could not load store items." });
+                toast({
+                    title: "Error fetching items",
+                    description: "Could not load store items.",
+                });
             }
         };
 
         fetchItems();
     }, [user]);
 
-    const handlePurchase = async (itemId: string) => {
+    const handlePurchase = async (item: Item) => {
+        const itemId = item._id;
+        const itemPrice = item.price;
+        const itemName = item.name;
         if (!user) {
             console.error("User not found");
             return;
         }
         const userId = user.userId;
+        const userEmail = user.email;
+
+        console.log("item price:", itemPrice);
+
+        const paystackPublicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+        if (!paystackPublicKey) {
+            throw new Error("Public Key not valid or undefined");
+        }
 
         try {
-            const response = await fetch("/api/purchase", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ itemId, userId }),
+            popup.checkout({
+                key: paystackPublicKey,
+                email: userEmail,
+                amount: parseFloat(itemPrice) * 100,
+                onSuccess: async (transaction) => {
+                    console.log("Transaction: ", transaction);
+                    toast({
+                        variant: "default",
+                        title: "Payment successful",
+                        description: "Thank you for your purchase.",
+                    });
+
+                    try {
+                        const response = await fetch("/api/purchase", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                itemId,
+                                userId,
+                                reference: transaction.reference,
+                            }),
+                        });
+
+                        if (response.ok) {
+                            const updatedPurchasedItems = [...(user.purchasedItems || []), itemId];
+
+                            const updatedUser: User = {
+                                userId: user.userId,
+                                name: user.name,
+                                email: user.email,
+                                avatarUrl: user.avatarUrl,
+                                purchasedItems: updatedPurchasedItems,
+                            };
+                            console.log("Purchase updated successfully:", updatedUser);
+                            toast({
+                                variant: "default",
+                                title: "Purchase recorded successfully",
+                                description: `You have purchased the ${itemName}, Please head over to the ${item.type} page to view your product`,
+                                duration: 5000,
+                            });
+
+                            setUser(updatedUser);
+                        } else {
+                            toast({
+                                variant: "destructive",
+                                title: "Unable to record the purchase.",
+                            });
+                            console.error("Failed to record purchase");
+                        }
+                    } catch (error) {
+                        console.error("Error during purchase:", error);
+                    }
+                },
+                onLoad: (response) => {
+                    console.log("onLoad: ", response);
+                },
+                onCancel: () => {
+                    toast({
+                        variant: "destructive",
+                        title: "Payment cancelled",
+                        description: "Purchase was cancelled.",
+                    })
+                    console.log("onCancel");
+                },
+                onError: (error) => {
+                    toast({
+                        variant: "destructive",
+                        title: "Payment failed",
+                        description: "Please try again.",
+                    });
+                    console.log("Error: ", error.message);
+                },
             });
-
-            if (response.ok) {
-                const updatedPurchasedItems = [...(user.purchasedItems || []), itemId];
-
-                const updatedUser: User = {
-                    userId: user.userId,
-                    name: user.name,
-                    email: user.email,
-                    avatarUrl: user.avatarUrl,
-                    purchasedItems: updatedPurchasedItems,
-                };
-                console.log("Purchase successful:", updatedUser);
-                toast({
-                    variant: "default",
-                    title: "Purchase successful",
-                    description: `You have purchased ${items}`,
-                    duration: 5000,
-                });
-
-                setUser(updatedUser);
-            } else {
-                toast({
-                    variant: "destructive",
-                    title: "You have already purchased this product.",
-                });
-                console.error("Purchase failed");
-            }
         } catch (error) {
-            console.error("Error during purchase:", error);
+            console.error("Error initializing Paystack:", error);
         }
     };
 
@@ -98,7 +155,7 @@ export default function Store() {
                                 R{item.price}
                             </CardDescription>
                             <Button
-                                onClick={() => handlePurchase(item._id)}
+                                onClick={() => handlePurchase(item)}
                                 disabled={user?.purchasedItems?.includes(item._id)}
                             >
                                 Buy Now
