@@ -14,6 +14,7 @@ import {
     CardFooter,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import InputDemo from "@/components/originui/passwordInput";
 
 export default function Signup() {
     const [name, setName] = useState("");
@@ -81,14 +82,15 @@ export default function Signup() {
                             </div>
                             <div>
                                 <Label htmlFor="password">Password</Label>
-                                <Input
+                                {/* <Input
                                     id="password"
                                     type="password"
                                     placeholder="Enter your password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                />
+                                /> */}
+                                <InputDemo password={password} setPassword={setPassword} />
                             </div>
                         </div>
                         <CardFooter className="flex justify-between mt-6">

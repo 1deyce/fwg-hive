@@ -16,13 +16,17 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import useUserStore from "@/zustand/store/userStore";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isVisible, setIsVisible] = useState<boolean>(false);
     const router = useRouter();
     const { toast } = useToast();
     const setUser = useUserStore((state) => state.setUser);
+
+    const toggleVisibility = () => setIsVisible((prevState) => !prevState);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -68,7 +72,7 @@ export default function Login() {
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle>Login to FWG HIVE</CardTitle>
+                    <CardTitle>Login to FWG Hive</CardTitle>
                     <CardDescription>Enter your credentials to access your account</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -85,16 +89,30 @@ export default function Login() {
                                     required
                                 />
                             </div>
-                            <div>
+                            <div className="relative">
                                 <Label htmlFor="password">Password</Label>
                                 <Input
                                     id="password"
-                                    type="password"
+                                    type={isVisible ? "text" : "password"}
                                     placeholder="Enter your password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                 />
+                                <button
+                                    className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg text-muted-foreground/80 outline-offset-2 transition-colors focus:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 mt-3"
+                                    type="button"
+                                    onClick={toggleVisibility}
+                                    aria-label={isVisible ? "Hide password" : "Show password"}
+                                    aria-pressed={isVisible}
+                                    aria-controls="password"
+                                >
+                                    {isVisible ? (
+                                        <EyeOff size={16} strokeWidth={2} aria-hidden="true" />
+                                    ) : (
+                                        <Eye size={16} strokeWidth={2} aria-hidden="true" />
+                                    )}
+                                </button>
                             </div>
                         </div>
                         <CardFooter className="flex justify-between mt-6">

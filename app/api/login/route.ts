@@ -9,6 +9,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export async function POST(request: Request) {
     try {
         const { email, password } = await request.json();
+        // if(password)
+
         const client = await clientPromise;
         const db = client.db("fitnessHub");
 
