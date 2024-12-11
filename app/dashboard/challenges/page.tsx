@@ -1,30 +1,53 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { fetchStoreItems, Item } from "@/lib/fetch-storeItems";
+import { useState, useEffect } from "react";
+import useUserStore from "@/zustand/store/userStore";
+import { categories } from "@/utils/storeItemCategories";
+import { useRouter } from "next/navigation";
 
 export default function Challenges() {
-    const challenges = [
-        { id: 1, name: "'30-Day Squat Challenge'", participants: 1500, duration: "'30 days'" },
-        { id: 2, name: "'Plank Master'", participants: 800, duration: "'14 days'" },
-        { id: 3, name: "'10K Steps Daily'", participants: 2000, duration: "'30 days'" },
-        { id: 4, name: "'Healthy Eating Challenge'", participants: 1200, duration: "'21 days'" },
-    ];
+    const [challenges, setChallenges] = useState<Item[]>([]);
+    const { getUser } = useUserStore();
+    const user = getUser();
+    const router = useRouter();
+    const purchasedChallengeIds = user?.purchasedItems || [];
 
-    // TODO: Add fetch logic
+    useEffect(() => {
+        const fetchItems = async () => {
+            const items = await fetchStoreItems();
+
+            const filteredChallenges =
+                items?.filter((item) => item.type === categories.challengesType) || [];
+
+            setChallenges(filteredChallenges);
+        };
+
+        fetchItems();
+    }, [user]);
 
     return (
         <div>
             <h2 className="text-2xl font-bold mb-4">Fitness Challenges</h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {challenges.map((challenge) => (
-                    <Card key={challenge.id}>
+                    <Card key={challenge._id}>
                         <CardHeader>
                             <CardTitle>{challenge.name}</CardTitle>
-                            <CardDescription>
-                                {challenge.participants} participants | {challenge.duration}
-                            </CardDescription>
+                            <CardDescription>{challenge.description}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Button>Join Challenge</Button>
+                            {purchasedChallengeIds.includes(challenge._id) ? (
+                                <Button onClick={() => router.push(`/dashboard/challenges/${challenge._id}`)}>
+                                    Open
+                                </Button>
+                            ) : (
+                                <Button onClick={() => router.push("/dashboard/store")}>
+                                    Join Challenge
+                                </Button>
+                            )}
                         </CardContent>
                     </Card>
                 ))}

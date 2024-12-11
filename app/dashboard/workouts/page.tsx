@@ -1,30 +1,53 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { fetchStoreItems, Item } from "@/lib/fetch-storeItems";
+import { useState, useEffect } from "react";
+import useUserStore from "@/zustand/store/userStore";
+import { categories } from "@/utils/storeItemCategories";
+import { useRouter } from "next/navigation";
 
 export default function Workouts() {
-    const workouts = [
-        { id: 1, name: "'Full Body HIIT'", duration: "'30 min'", difficulty: "'Intermediate'" },
-        { id: 2, name: "'Upper Body Strength'", duration: "'45 min'", difficulty: "'Advanced'" },
-        { id: 3, name: "'Yoga Flow'", duration: "'60 min'", difficulty: "'Beginner'" },
-        { id: 4, name: "'Core Crusher'", duration: "'20 min'", difficulty: "'Intermediate'" },
-    ];
+    const [workouts, setWorkouts] = useState<Item[]>([]);
+    const { getUser } = useUserStore();
+    const user = getUser();
+    const router = useRouter();
+    const purchasedWorkoutIds = user?.purchasedItems || [];
 
-    // TODO: Add fetch logic
+    useEffect(() => {
+        const fetchItems = async () => {
+            const items = await fetchStoreItems();
+
+            const filteredWorkouts =
+                items?.filter((item) => item.type === categories.workoutsType) || [];
+
+            setWorkouts(filteredWorkouts);
+        };
+
+        fetchItems();
+    }, [user]);
 
     return (
         <div>
             <h2 className="text-2xl font-bold mb-4">Your Workouts</h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {workouts.map((workout) => (
-                    <Card key={workout.id}>
+                    <Card key={workout._id}>
                         <CardHeader>
                             <CardTitle>{workout.name}</CardTitle>
-                            <CardDescription>
-                                {workout.duration} | {workout.difficulty}
-                            </CardDescription>
+                            <CardDescription>{workout.description}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Button>Start Workout</Button>
+                            {purchasedWorkoutIds.includes(workout._id) ? (
+                                <Button onClick={() => router.push(`/dashboard/workouts/${workout._id}`)}>
+                                    Open
+                                </Button>
+                            ) : (
+                                <Button onClick={() => router.push("/dashboard/store")}>
+                                    Purchase Workout
+                                </Button>
+                            )}
                         </CardContent>
                     </Card>
                 ))}

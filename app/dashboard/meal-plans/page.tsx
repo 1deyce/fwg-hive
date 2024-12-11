@@ -1,30 +1,57 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { fetchStoreItems, Item } from "@/lib/fetch-storeItems";
+import { useState, useEffect } from "react";
+import useUserStore from "@/zustand/store/userStore";
+import { categories } from "@/utils/storeItemCategories";
+import { useRouter } from "next/navigation";
 
 export default function MealPlans() {
-    const mealPlans = [
-        { id: 1, name: "'High Protein Plan'", calories: 2500, meals: 5 },
-        { id: 2, name: "'Vegetarian Delight'", calories: 2000, meals: 4 },
-        { id: 3, name: "'Keto Kickstart'", calories: 1800, meals: 3 },
-        { id: 4, name: "'Balanced Nutrition'", calories: 2200, meals: 4 },
-    ];
+    const [mealPlans, setMealPlans] = useState<Item[]>([]);
+    const { getUser } = useUserStore();
+    const user = getUser();
+    const router = useRouter();
+    const purchasedMealPlanIds = user?.purchasedItems || [];
 
-    // TODO: Add fetch logic
+    useEffect(() => {
+        const fetchItems = async () => {
+            const items = await fetchStoreItems();
+
+            const filteredPlans =
+                items?.filter((item) => item.type === categories.mealPlansType) || [];
+
+            setMealPlans(filteredPlans);
+        };
+
+        fetchItems();
+    }, [user]);
 
     return (
         <div>
             <h2 className="text-2xl font-bold mb-4">Meal Plans</h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {mealPlans.map((plan) => (
-                    <Card key={plan.id}>
+                    <Card key={plan._id}>
                         <CardHeader>
                             <CardTitle>{plan.name}</CardTitle>
-                            <CardDescription>
-                                {plan.calories} calories | {plan.meals} meals per day
-                            </CardDescription>
+                            <CardDescription>{plan.description}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Button>View Plan</Button>
+                            {purchasedMealPlanIds.includes(plan._id) ? (
+                                <Button
+                                    onClick={() =>
+                                        router.push(`/dashboard/challenges/${plan._id}`)
+                                    }
+                                >
+                                    Open
+                                </Button>
+                            ) : (
+                                <Button onClick={() => router.push("/dashboard/store")}>
+                                    Purchase Meal Plan
+                                </Button>
+                            )}
                         </CardContent>
                     </Card>
                 ))}

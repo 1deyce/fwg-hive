@@ -7,16 +7,8 @@ import useUserStore from "@/zustand/store/userStore";
 import { User } from "@/zustand/store/userStore";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
-
-interface Item {
-    _id: string;
-    name: string;
-    price: string;
-    description: string;
-    accessUrl: string;
-    imgSrc: string;
-    imgAlt: string;
-}
+import { Item } from "@/lib/fetch-storeItems";
+import { fetchStoreItems } from "@/lib/fetch-storeItems";
 
 export default function Store() {
     const [items, setItems] = useState<Item[]>([]);
@@ -24,26 +16,20 @@ export default function Store() {
     const user = getUser();
     const { toast } = useToast();
 
-    const fetchStoreItems = async () => {
-        const response = await fetch("/api/get-store-items", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            console.error("Failed to fetch store items");
-            return;
-        }
-
-        const data: Item[] = await response.json();
-        console.log("Store items fetched successfully:", data);
-        setItems(data);
-    };
     useEffect(() => {
-        fetchStoreItems();
-    }, []);
+        const fetchItems = async () => {
+            try {
+                const fetchedItems = await fetchStoreItems();
+                console.log("Store items fetched successfully:", fetchedItems);
+                setItems(fetchedItems);
+            } catch (error) {
+                console.error("Failed to fetch store items:", error);
+                toast({ title: "Error fetching items", description: "Could not load store items." });
+            }
+        };
+
+        fetchItems();
+    }, [user]);
 
     const handlePurchase = async (itemId: string) => {
         if (!user) {
@@ -95,21 +81,22 @@ export default function Store() {
             <h2 className="text-2xl font-bold mb-6">Shop FWG</h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {items.map((item) => (
-                    <Card key={item._id} className="w-[300px]">
+                    <Card key={item._id} className="">
                         <CardHeader className="text-center">
                             <CardTitle className="text-lg">{item.name}</CardTitle>
-
                         </CardHeader>
                         <CardContent className="text-center flex flex-col items-center">
                             <Image
                                 src={item.imgSrc}
                                 alt={item.imgAlt}
-                                width={150}
+                                width={300}
                                 height={10}
                                 className="rounded-sm"
                             />
                             <p className="my-4 text-sm">{item.description}</p>
-                            <CardDescription className="text-lg text-teal-600 mb-3">R{item.price}</CardDescription>
+                            <CardDescription className="text-lg text-teal-600 mb-3">
+                                R{item.price}
+                            </CardDescription>
                             <Button
                                 onClick={() => handlePurchase(item._id)}
                                 disabled={user?.purchasedItems?.includes(item._id)}
