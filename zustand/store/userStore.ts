@@ -19,6 +19,10 @@ interface UserState {
 }
 
 const getUserFromLocalStorage = (): User | null => {
+    if (typeof window === "undefined") {
+        return null;
+    }
+    
     const user = localStorage.getItem("user");
     return user ? JSON.parse(user) : null;
 };
@@ -26,10 +30,12 @@ const getUserFromLocalStorage = (): User | null => {
 // TODO: fix internal server error 500 - "localStorage is not defined"
 
 const persistUserToLocalStorage = (user: User | null) => {
-    if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-    } else {
-        localStorage.removeItem("user");
+    if (typeof window !== "undefined") {
+        if (user) {
+            localStorage.setItem("user", JSON.stringify(user));
+        } else {
+            localStorage.removeItem("user");
+        }
     }
 };
 
