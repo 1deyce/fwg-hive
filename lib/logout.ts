@@ -2,7 +2,6 @@
 
 import useUserStore from "@/zustand/store/userStore";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 const useLogout = () => {
     const clearUser = useUserStore((state) => state.clearUser);
