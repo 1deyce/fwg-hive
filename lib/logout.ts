@@ -2,6 +2,7 @@
 
 import useUserStore from "@/zustand/store/userStore";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const useLogout = () => {
     const clearUser = useUserStore((state) => state.clearUser);
@@ -15,7 +16,9 @@ const useLogout = () => {
             credentials: 'include',
         });
 
-        localStorage.removeItem("token");
+        useEffect(() => {
+            localStorage.removeItem("token");
+        })
         router.push("/login");
     };
 

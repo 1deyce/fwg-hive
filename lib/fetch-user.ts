@@ -1,7 +1,15 @@
 "use client"
 
+import { useEffect, useState } from "react";
+
 export const fetchUserData = async () => {
-    const token = localStorage.getItem("token");
+    const [token, setToken] = useState<String>(); 
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Token Required");
+        setToken(token);
+    })
+
     try {
         const response = await fetch('/api/get-user', {
             method: "GET",
