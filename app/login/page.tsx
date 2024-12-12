@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,7 @@ export default function Login() {
     const router = useRouter();
     const { toast } = useToast();
     const setUser = useUserStore((state) => state.setUser);
+    const [token, setToken] = useState<string | null>(null);
 
     const toggleVisibility = () => setIsVisible((prevState) => !prevState);
 
@@ -42,9 +43,7 @@ export default function Login() {
         const token = data.token;
 
         if (response.ok) {
-            if (typeof window !== "undefined") {
-                localStorage.setItem("token", token);
-            }
+            setToken(token);
             setUser(data);
             router.push("/dashboard");
             toast({
@@ -69,6 +68,12 @@ export default function Login() {
             }
         }
     };
+
+    useEffect(() => {
+        if (token) {
+            localStorage.setItem("token", token);
+        }
+    }, [token]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
