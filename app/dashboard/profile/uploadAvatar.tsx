@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import useUserStore from "@/zustand/store/userStore";
 import { useToast } from "@/hooks/use-toast";
 import FileUploadDropzone from "@/components/ui/custom-dropzone";
+import Image from "next/image";
 
 export default function UploadAvatar() {
     const { getUser, setUser } = useUserStore();
@@ -25,7 +26,7 @@ export default function UploadAvatar() {
 
     useEffect(() => {
         fetchUserData();
-    }, []);
+    }, [fetchUserData]);
 
     const handleUpload = async () => {
         if (!files.length) {
@@ -93,9 +94,11 @@ export default function UploadAvatar() {
                 Update Avatar
             </Button>
             {user && user.avatarUrl && (
-                <img
+                <Image
                     src={getCldImageUrl({ src: user.avatarUrl, width: 300, height: 100 })}
                     alt="User Avatar"
+                    width={300}
+                    height={100}
                     className="rounded-md"
                 />
             )}

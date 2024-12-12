@@ -14,6 +14,7 @@ const ChallengeDetail = () => {
             const items = await fetchStoreItems();
             const filteredChallenge = items?.filter((item) => item._id === challengeId) || [];
             const accessUrl = filteredChallenge[0].accessUrl;
+            console.log(accessUrl);
             // use url to access file data to display
             setChallenge(filteredChallenge);
         } catch (err) {
@@ -23,7 +24,7 @@ const ChallengeDetail = () => {
 
     useEffect(() => {
         fetchItems();
-    }, [challengeId]);
+    }, [challengeId, fetchItems]);
 
     return (
         <div>

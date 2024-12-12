@@ -14,6 +14,7 @@ const MealPlanDetail = () => {
             const items = await fetchStoreItems();
             const filteredChallenge = items?.filter((item) => item._id === mealPlanId) || [];
             const accessUrl = filteredChallenge[0].accessUrl;
+            console.log(accessUrl);
             // use url to access file data to display
             setMealPlan(filteredChallenge);
         } catch (err) {
@@ -23,7 +24,7 @@ const MealPlanDetail = () => {
 
     useEffect(() => {
         fetchItems();
-    }, [mealPlanId]);
+    }, [mealPlanId, fetchItems]);
 
     return (
         <div>

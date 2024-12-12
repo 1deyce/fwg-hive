@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/verify-token";
 
-export async function GET(request: Request) {
+export async function GET() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
     if (!token) throw new Error("Token not found");

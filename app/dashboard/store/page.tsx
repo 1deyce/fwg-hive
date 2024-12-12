@@ -34,7 +34,7 @@ export default function Store() {
         };
 
         fetchItems();
-    }, [user]);
+    }, [user, toast]);
 
     const handlePurchase = async (item: Item) => {
         const itemId = item._id;
