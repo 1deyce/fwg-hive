@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,7 +23,6 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isVisible, setIsVisible] = useState<boolean>(false);
-    const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
     const { toast } = useToast();
     const setUser = useUserStore((state) => state.setUser);
@@ -37,13 +37,15 @@ export default function Login() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ email, password }),
-        })
+        });
 
         const data = await response.json();
         const token = data.token;
 
         if (response.ok) {
-            setToken(token);
+            if (typeof window !== "undefined") {
+                localStorage.setItem("token", token);
+            }
             setUser(data);
             router.push("/dashboard");
             toast({
@@ -68,12 +70,6 @@ export default function Login() {
             }
         }
     };
-
-    useEffect(() => {
-        if (token) {
-            localStorage.setItem("token", token);
-        }
-    }, [token]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">

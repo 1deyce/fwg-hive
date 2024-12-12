@@ -40,6 +40,7 @@ export async function GET() {
                 name: user.name,
                 email: user.email,
                 avatarUrl: user.avatarUrl,
+                purchasedItems: user.purchasedItems,
             },
             { status: 200 }
         );
