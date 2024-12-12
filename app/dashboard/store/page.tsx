@@ -10,7 +10,6 @@ import Image from "next/image";
 import { Item } from "@/lib/fetch-storeItems";
 import { fetchStoreItems } from "@/lib/fetch-storeItems";
 import Paystack from "@paystack/inline-js";
-const popup = new Paystack();
 
 export default function Store() {
     const [items, setItems] = useState<Item[]>([]);
@@ -37,17 +36,16 @@ export default function Store() {
     }, [user, toast]);
 
     const handlePurchase = async (item: Item) => {
-        const itemId = item._id;
-        const itemPrice = item.price;
-        const itemName = item.name;
         if (!user) {
             console.error("User not found");
             return;
         }
+
+        const itemId = item._id;
+        const itemPrice = item.price;
+        const itemName = item.name;
         const userId = user.userId;
         const userEmail = user.email;
-
-        console.log("item price:", itemPrice);
 
         const paystackPublicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
         if (!paystackPublicKey) {
@@ -55,6 +53,7 @@ export default function Store() {
         }
 
         try {
+            const popup = new Paystack();
             popup.checkout({
                 key: paystackPublicKey,
                 email: userEmail,
@@ -92,7 +91,7 @@ export default function Store() {
                             toast({
                                 variant: "default",
                                 title: "Purchase recorded successfully",
-                                description: `You have purchased the ${itemName}, Please head over to the ${item.type} page to view your product`,
+                                description: `You have purchased the ${itemName}. Please head over to the ${item.type} page to view your product.`,
                                 duration: 5000,
                             });
 
@@ -116,7 +115,7 @@ export default function Store() {
                         variant: "destructive",
                         title: "Payment cancelled",
                         description: "Purchase was cancelled.",
-                    })
+                    });
                     console.log("onCancel");
                 },
                 onError: (error) => {
@@ -147,7 +146,7 @@ export default function Store() {
                                 src={item.imgSrc}
                                 alt={item.imgAlt}
                                 width={300}
-                                height={10}
+                                height={300}
                                 className="rounded-sm"
                             />
                             <p className="my-4 text-sm">{item.description}</p>
