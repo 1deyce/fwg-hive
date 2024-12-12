@@ -41,9 +41,7 @@ export default function Store() {
             return;
         }
 
-        const itemId = item._id;
-        const itemPrice = item.price;
-        const itemName = item.name;
+        const { _id: itemId, price: itemPrice, name: itemName } = item;
         const userId = user.userId;
         const userEmail = user.email;
 
@@ -81,10 +79,7 @@ export default function Store() {
                             const updatedPurchasedItems = [...(user.purchasedItems || []), itemId];
 
                             const updatedUser: User = {
-                                userId: user.userId,
-                                name: user.name,
-                                email: user.email,
-                                avatarUrl: user.avatarUrl,
+                                ...user,
                                 purchasedItems: updatedPurchasedItems,
                             };
                             console.log("Purchase updated successfully:", updatedUser);

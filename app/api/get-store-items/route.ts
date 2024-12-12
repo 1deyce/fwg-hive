@@ -7,7 +7,6 @@ export async function GET() {
 
     try {
         const items = await db.collection("storeItems").find({}).toArray();
-        console.log("store items from db: ", items);
         return NextResponse.json(items, {
             status: 200,
         });
