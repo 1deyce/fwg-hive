@@ -9,22 +9,22 @@ const WorkoutDetail = () => {
     const { id } = useParams();
     const workoutId = id;
 
-    const fetchItems = async () => {
-        try {
-            const items = await fetchStoreItems();
-            const filteredWorkout = items?.filter((item) => item._id === workoutId) || [];
-            const accessUrl = filteredWorkout[0].accessUrl;
-            console.log(accessUrl)
-            // use url to access file data to display
-            setWorkout(filteredWorkout);
-        } catch (err) {
-            console.error("Failed to fetch store items:", err);
-        }
-    };
-
     useEffect(() => {
+        const fetchItems = async () => {
+            try {
+                const items = await fetchStoreItems();
+                const filteredWorkout = items?.filter((item) => item._id === workoutId) || [];
+                const accessUrl = filteredWorkout[0]?.accessUrl;
+                console.log(accessUrl);
+                // use url to access file data to display
+                setWorkout(filteredWorkout);
+            } catch (err) {
+                console.error("Failed to fetch store items:", err);
+            }
+        };
+
         fetchItems();
-    }, [workoutId, fetchItems]);
+    }, [workoutId]);
 
     return (
         <div>

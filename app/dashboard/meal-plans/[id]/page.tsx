@@ -9,22 +9,22 @@ const MealPlanDetail = () => {
     const { id } = useParams();
     const mealPlanId = id;
 
-    const fetchItems = async () => {
-        try {
-            const items = await fetchStoreItems();
-            const filteredChallenge = items?.filter((item) => item._id === mealPlanId) || [];
-            const accessUrl = filteredChallenge[0].accessUrl;
-            console.log(accessUrl);
-            // use url to access file data to display
-            setMealPlan(filteredChallenge);
-        } catch (err) {
-            console.error("Failed to fetch store items:", err);
-        }
-    };
-
     useEffect(() => {
+        const fetchItems = async () => {
+            try {
+                const items = await fetchStoreItems();
+                const filteredMealPlan = items?.filter((item) => item._id === mealPlanId) || [];
+                const accessUrl = filteredMealPlan[0]?.accessUrl;
+                console.log(accessUrl);
+                // use url to access file data to display
+                setMealPlan(filteredMealPlan);
+            } catch (err) {
+                console.error("Failed to fetch store items:", err);
+            }
+        };
+
         fetchItems();
-    }, [mealPlanId, fetchItems]);
+    }, [mealPlanId]);
 
     return (
         <div>

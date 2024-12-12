@@ -22,6 +22,7 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
     const { toast } = useToast();
     const setUser = useUserStore((state) => state.setUser);
@@ -42,9 +43,7 @@ export default function Login() {
         const token = data.token;
 
         if (response.ok) {
-            useEffect(() => {
-                localStorage.setItem("token", token);
-            })
+            setToken(token);
             setUser(data);
             router.push("/dashboard");
             toast({
@@ -69,6 +68,12 @@ export default function Login() {
             }
         }
     };
+
+    useEffect(() => {
+        if (token) {
+            localStorage.setItem("token", token);
+        }
+    }, [token]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">

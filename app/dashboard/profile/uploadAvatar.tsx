@@ -14,19 +14,19 @@ export default function UploadAvatar() {
 
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
-    const fetchUserData = async () => {
-        try {
-            const response = await fetch("/api/get-user");
-            const data = await response.json();
-            setUser(data);
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-        }
-    };
-
     useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch("/api/get-user");
+                const data = await response.json();
+                setUser(data);
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        };
+
         fetchUserData();
-    }, [fetchUserData]);
+    }, [setUser]);
 
     const handleUpload = async () => {
         if (!files.length) {
@@ -60,8 +60,6 @@ export default function UploadAvatar() {
                 console.error("Error uploading image:", error);
             }
         }
-
-        await fetchUserData();
     };
 
     const saveImageUrlToDatabase = async (publicId: string) => {

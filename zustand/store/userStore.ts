@@ -2,7 +2,6 @@
 
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { useEffect } from "react";
 
 export interface User {
     userId: string;

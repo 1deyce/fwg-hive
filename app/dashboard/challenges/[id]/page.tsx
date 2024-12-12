@@ -9,22 +9,22 @@ const ChallengeDetail = () => {
     const { id } = useParams();
     const challengeId = id;
 
-    const fetchItems = async () => {
-        try {
-            const items = await fetchStoreItems();
-            const filteredChallenge = items?.filter((item) => item._id === challengeId) || [];
-            const accessUrl = filteredChallenge[0].accessUrl;
-            console.log(accessUrl);
-            // use url to access file data to display
-            setChallenge(filteredChallenge);
-        } catch (err) {
-            console.error("Failed to fetch store items:", err);
-        }
-    };
-
     useEffect(() => {
+        const fetchItems = async () => {
+            try {
+                const items = await fetchStoreItems();
+                const filteredChallenge = items?.filter((item) => item._id === challengeId) || [];
+                const accessUrl = filteredChallenge[0]?.accessUrl;
+                console.log(accessUrl);
+                // use url to access file data to display
+                setChallenge(filteredChallenge);
+            } catch (err) {
+                console.error("Failed to fetch store items:", err);
+            }
+        };
+
         fetchItems();
-    }, [challengeId, fetchItems]);
+    }, [challengeId]);
 
     return (
         <div>

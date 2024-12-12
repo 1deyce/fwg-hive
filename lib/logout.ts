@@ -15,12 +15,12 @@ const useLogout = () => {
             method: 'POST',
             credentials: 'include',
         });
-
-        useEffect(() => {
-            localStorage.removeItem("token");
-        })
         router.push("/login");
     };
+
+    useEffect(() => {
+        localStorage.removeItem("token");
+    });
 
     return logout;
 };
