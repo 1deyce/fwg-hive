@@ -1,5 +1,6 @@
-import clientPromise from "@/lib/mongodb";
+import connectMongo from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 interface PurchasedItem {
     _id: string;
@@ -13,8 +14,8 @@ interface PurchasedItem {
 }
 
 export async function getPurchasedItems(userId: string): Promise<PurchasedItem[]> {
-    const client = await clientPromise;
-    const db = client.db("fitnessHub");
+    await connectMongo();
+    const db = mongoose.connection.db!;
 
     if (!userId) throw new Error("User Id required");
 

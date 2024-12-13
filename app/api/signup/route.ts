@@ -1,23 +1,21 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import clientPromise from "@/lib/mongodb";
+import connectMongo from "@/lib/mongodb";
+import mongoose from "mongoose";
 
 export async function POST(request: Request) {
     try {
         const { name, email, password } = await request.json();
-        const client = await clientPromise;
-        const db = client.db("fitnessHub");
+        await connectMongo();
+        const db = mongoose.connection.db!;
 
-        // Check if user already exists
         const existingUser = await db.collection("users").findOne({ email });
         if (existingUser) {
             return NextResponse.json({ error: "User already exists" }, { status: 400 });
         }
 
-        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create new user
         const result = await db.collection("users").insertOne({
             name,
             email,

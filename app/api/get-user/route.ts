@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/verify-token";
+import connectMongo from "@/lib/mongodb";
+import mongoose from "mongoose";
 
 export async function GET() {
     const cookieStore = await cookies();
@@ -26,8 +27,8 @@ export async function GET() {
     }
 
     try {
-        const client = await clientPromise;
-        const db = client.db("fitnessHub");
+        await connectMongo();
+        const db = mongoose.connection.db!;
         const user = await db.collection("users").findOne({ _id: new ObjectId(userId) });
 
         if (!user) {

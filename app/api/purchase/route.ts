@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import connectMongo from "@/lib/mongodb";
+import mongoose from "mongoose";
 
 export async function POST(request: Request) {
     try {
@@ -8,8 +9,8 @@ export async function POST(request: Request) {
         if (!userId) throw new Error("User Id required");
         if (!itemId) throw new Error("Item Id required");
 
-        const client = await clientPromise;
-        const db = client.db("fitnessHub");
+        await connectMongo();
+        const db = mongoose.connection.db!;
 
         const user = await db.collection("users").findOne({ _id: new ObjectId(userId) });
         if (!user) {

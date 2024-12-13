@@ -1,9 +1,10 @@
-import clientPromise from "@/lib/mongodb";
+import connectMongo from "@/lib/mongodb";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    const client = await clientPromise;
-    const db = client.db("fitnessHub");
+    await connectMongo();
+    const db = mongoose.connection.db!;
 
     try {
         const items = await db.collection("storeItems").find({}).toArray();

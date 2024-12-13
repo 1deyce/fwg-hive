@@ -1,37 +1,27 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+import mongoose from "mongoose";
 
-if (!process.env.MONGODB_URI) {
-    throw new Error("Invalid/Missing environment variable: MONGODB_URI");
-}
+const MONGODB_URI = process.env.MONGODB_URI;
+const cached: { connection?: typeof mongoose; promise?: Promise<typeof mongoose> } = {};
 
-const uri = process.env.MONGODB_URI;
-const options = {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    },
-    tls: true,
-};
-
-let client;
-let clientPromise: Promise<MongoClient>;
-
-if (process.env.NODE_ENV === "development") {
-    // In development mode, use a global variable so that the value
-    // is preserved across module reloads caused by HMR (Hot Module Replacement).
-    if (!global._mongoClientPromise) {
-        client = new MongoClient(uri, options);
-        global._mongoClientPromise = await client.connect();
+async function connectMongo() {
+    if (!MONGODB_URI) {
+        throw new Error("Please define the MONGO_URI environment variable inside .env.local");
     }
-    clientPromise = global._mongoClientPromise;
-} else {
-    // In production mode, it's best to not use a global variable.
-    client = new MongoClient(uri, options);
-    clientPromise = await client.connect().catch((err) => {
-        console.error("Failed to connect to MongoDB:", err);
-        throw err;
-    });
+    if (cached.connection) {
+        return cached.connection;
+    }
+    if (!cached.promise) {
+        const opts = {
+            bufferCommands: false,
+        };
+        cached.promise = mongoose.connect(MONGODB_URI, opts);
+    }
+    try {
+        cached.connection = await cached.promise;
+    } catch (e) {
+        cached.promise = undefined;
+        throw e;
+    }
+    return cached.connection;
 }
-
-export default clientPromise;
+export default connectMongo;

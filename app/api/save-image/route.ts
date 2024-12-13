@@ -1,4 +1,5 @@
-import clientPromise from "@/lib/mongodb";
+import mongoose from "mongoose";
+import connectMongo from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/verify-token";
@@ -27,13 +28,23 @@ export async function POST(request: Request) {
     }
 
     try {
-        const client = await clientPromise;
-        const db = client.db("fitnessHub");
-        const result = await db.collection("users").findOneAndUpdate(
-            { _id: new ObjectId(userId) },
-            { $set: { avatarUrl: publicId } },
-            { returnDocument: "after" }
-        );
+        await connectMongo();
+        const db = mongoose.connection.db!;
+        const result = await db
+            .collection("users")
+            .findOneAndUpdate(
+                { _id: new ObjectId(userId) },
+                { $set: { avatarUrl: publicId } },
+                { returnDocument: "after" }
+            );
+
+        if (!result) {
+            console.error("No document found or updated.");
+            return NextResponse.json(
+                { message: "Public Id not found or updated" },
+                { status: 404 }
+            );
+        }
 
         if (!result.value) {
             console.error("No document found or updated.");

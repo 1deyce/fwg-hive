@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
 import { verifyPassword } from "@/lib/verify-password";
 import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
+import mongoose from "mongoose";
+import connectMongo from "@/lib/mongodb";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -11,11 +12,12 @@ export async function POST(request: Request) {
         const { email, password } = await request.json();
         console.log("Received login request for email:", email);
 
-        const client = await clientPromise;
+        await connectMongo();
         console.log("Connected to MongoDB");
+        const db = mongoose.connection.db!;
 
-        const db = client.db("fitnessHub");
         const existingUser = await db.collection("users").findOne({ email });
+        console.log(existingUser);
 
         if (!existingUser) {
             console.log("User not found:", email);
