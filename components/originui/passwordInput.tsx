@@ -99,7 +99,7 @@ export default function InputDemo({ password, setPassword }: InputDemoProps) {
             </div>
 
             {/* Password strength description */}
-            <p id="password-strength" className="mb-2 text-sm font-medium text-foreground">
+            <p id="password-strength" className="mb-2 text-sm font-medium text-background">
                 {getStrengthText(strengthScore)}. Must contain:
             </p>
 
