@@ -98,11 +98,10 @@ const SidebarProvider = React.forwardRef<
                 }
             };
 
-            if (typeof window === "undefined") {
-                return;
+            if (typeof window !== "undefined") {
+                window.addEventListener("keydown", handleKeyDown);
+                return () => window.removeEventListener("keydown", handleKeyDown);
             }
-            window.addEventListener("keydown", handleKeyDown);
-            return () => window.removeEventListener("keydown", handleKeyDown);
         }, [toggleSidebar]);
 
         // We add a state so that we can do data-state="expanded" or "collapsed".
