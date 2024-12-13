@@ -9,7 +9,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export async function POST(request: Request) {
     try {
         const { email, password } = await request.json();
-        // if(password)
 
         const client = await clientPromise;
         const db = client.db("fitnessHub");
@@ -35,22 +34,28 @@ export async function POST(request: Request) {
             expiresIn: "1h",
         });
 
-        const response = NextResponse.json({
-            message: "Login successful",
-            userId: existingUser._id,
-            name: existingUser.name,
-            email: existingUser.email,
-            avatarUrl: existingUser.avatarUrl,
-            purchasedItems: existingUser.purchasedItems,
-            token,
-        }, { status: 200 });
+        const response = NextResponse.json(
+            {
+                message: "Login successful",
+                userId: existingUser._id,
+                name: existingUser.name,
+                email: existingUser.email,
+                avatarUrl: existingUser.avatarUrl,
+                purchasedItems: existingUser.purchasedItems,
+                token,
+            },
+            { status: 200 }
+        );
 
-        response.headers.set('Set-Cookie', serialize('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 60 * 60,
-            path: '/',
-        }));
+        response.headers.set(
+            "Set-Cookie",
+            serialize("token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                maxAge: 60 * 60,
+                path: "/",
+            })
+        );
 
         return response;
     } catch (error) {

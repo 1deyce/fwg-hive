@@ -31,6 +31,7 @@ export default async function Dashboard() {
     }
 
     const purchasedItems = await getPurchasedItems(userId);
+    console.log(purchasedItems);
 
     return (
         <div className="space-y-6">
