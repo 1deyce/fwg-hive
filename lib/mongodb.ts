@@ -11,6 +11,7 @@ const options = {
         strict: true,
         deprecationErrors: true,
     },
+    tls: true,
 };
 
 let client;
