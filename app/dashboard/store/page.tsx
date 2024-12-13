@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { Item } from "@/lib/fetch-storeItems";
 import { fetchStoreItems } from "@/lib/fetch-storeItems";
-import Paystack from "@paystack/inline-js";
+// import Paystack from "@paystack/inline-js";
 
 export default function Store() {
     const [items, setItems] = useState<Item[]>([]);
@@ -51,7 +51,8 @@ export default function Store() {
         }
 
         try {
-            if (typeof window !== 'undefined') {
+            if (typeof window !== "undefined") {
+                const Paystack = (await import("@paystack/inline-js")).default;
                 const popup = new Paystack();
                 popup.checkout({
                     key: paystackPublicKey,
@@ -77,7 +78,10 @@ export default function Store() {
                             });
 
                             if (response.ok) {
-                                const updatedPurchasedItems = [...(user.purchasedItems || []), itemId];
+                                const updatedPurchasedItems = [
+                                    ...(user.purchasedItems || []),
+                                    itemId,
+                                ];
 
                                 const updatedUser: User = {
                                     ...user,
