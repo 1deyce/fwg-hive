@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
@@ -270,7 +270,7 @@ const SidebarTrigger = React.forwardRef<
             }}
             {...props}
         >
-            <PanelLeft />
+            <PanelLeft /> 
             <span className="sr-only">Toggle Sidebar</span>
         </Button>
     );

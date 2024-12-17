@@ -11,6 +11,7 @@ import {
     LogOut,
     ShoppingBag,
     LayoutDashboard,
+    Loader,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -30,8 +31,11 @@ import {
 import useLogout from "@/lib/logout";
 import { useToast } from "@/hooks/use-toast";
 import useUserStore from "@/zustand/store/userStore";
+import { useEffect, useState } from "react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+    const [avatar, setAvatar] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
     const pathname = usePathname();
     const logout = useLogout();
     const { toast } = useToast();
@@ -56,18 +60,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         });
     };
 
-    let avatar: string;
-    try {
-        avatar = getCldImageUrl({
-            src: user?.avatarUrl || '',
-            width: 300,
-            height: 300,
-            crop: "fill",
-        });
-    } catch (error) {
-        console.error("Error constructing Cloudinary URL:", error);
-        avatar = `${<User2 />}`;
-    }
+    useEffect(() => {
+        const fetchAvatar = async () => {
+            try {
+                const avatarUrl = getCldImageUrl({
+                    src: user?.avatarUrl || "",
+                    width: 300,
+                    height: 300,
+                    crop: "fill",
+                });
+                setAvatar(avatarUrl);
+                setIsLoading(false);
+            } catch (error) {
+                console.error("Error fetching avatar:", error);
+                setAvatar(null);
+                setIsLoading(false);
+            }
+        };
+
+        fetchAvatar();
+    }, []);
 
     return (
         <SidebarProvider>
@@ -76,7 +88,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <SidebarHeader>
                         <div className="flex items-center gap-2 px-4 py-2">
                             <Avatar>
-                                {avatar ? (
+                                {isLoading ? (
+                                    <AvatarFallback>
+                                        <Loader />
+                                    </AvatarFallback>
+                                ) : avatar ? (
                                     <AvatarImage src={avatar} alt="User" />
                                 ) : (
                                     <AvatarFallback>
@@ -139,4 +155,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
         </SidebarProvider>
     );
+}
+
+export async function getServerSideProps(context) {
+    // ... other server-side logic
+
+    const avatarUrl = await getCldImageUrl({
+        src: user?.avatarUrl || "",
+        width: 300,
+        height: 300,
+        crop: "fill",
+    });
+
+    return {
+        props: {
+            avatarUrl,
+        },
+    };
 }

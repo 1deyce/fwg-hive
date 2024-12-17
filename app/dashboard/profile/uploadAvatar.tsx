@@ -93,7 +93,7 @@ export default function UploadAvatar() {
             </Button>
             {user && user.avatarUrl && (
                 <Image
-                    src={getCldImageUrl({ src: user.avatarUrl, width: 300, height: 100 })}
+                    src={getCldImageUrl({ src: user.avatarUrl })}
                     alt="User Avatar"
                     width={300}
                     height={100}
