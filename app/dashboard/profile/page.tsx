@@ -12,6 +12,8 @@ export default function Profile() {
     const { getUser } = useUserStore();
     const user = getUser();
 
+    // TODO: handle update user details
+
     return (
         <div>
             <h2 className="text-2xl font-bold mb-4">Your Profile</h2>
@@ -31,7 +33,7 @@ export default function Profile() {
                                     <Label htmlFor="email">Email</Label>
                                     <Input id="email" type="email" defaultValue={user?.email} />
                                 </div>
-                                <div>
+                                {/* <div>
                                     <Label htmlFor="age">Age</Label>
                                     <Input id="age" type="number" defaultValue="" />
                                 </div>
@@ -42,16 +44,16 @@ export default function Profile() {
                                 <div>
                                     <Label htmlFor="height">Height (cm)</Label>
                                     <Input id="height" type="number" defaultValue="" />
-                                </div>
+                                </div> */}
                                 <Button type="submit" className="mx-auto w-1/2">
                                     Update Profile
                                 </Button>
                             </form>
                         </div>
-                        <div className="flex basis-1/5 justify-center bg-white">
-                            <Separator orientation="vertical" className="bg-black/20" />
+                        <div className="flex basis-1/5 justify-center bg-neutral-950">
+                            <Separator orientation="vertical" className="bg-neutral-700" />
                         </div>
-                        <div className="flex basis-2/5 justify-center bg-white">
+                        <div className="flex basis-2/5 justify-center bg-neutral-950">
                             <UploadAvatar />
                         </div>
                     </div>

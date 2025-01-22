@@ -47,7 +47,7 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="min-h-screen flex items-center justify-center bg-neutral-950">
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle>Sign Up for FWG Hive</CardTitle>
@@ -94,8 +94,14 @@ export default function Signup() {
                             </div>
                         </div>
                         <CardFooter className="flex justify-between mt-6">
-                            <Button type="submit">Sign Up</Button>
-                            <Button variant="outline" onClick={() => router.push("/login")}>
+                            <Button type="submit" className="bg-teal-600">
+                                Sign Up
+                            </Button>
+                            <Button
+                                variant="outline"
+                                className="text-neutral-950"
+                                onClick={() => router.push("/login")}
+                            >
                                 Login
                             </Button>
                         </CardFooter>

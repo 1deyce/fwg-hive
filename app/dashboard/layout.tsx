@@ -49,6 +49,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { icon: Trophy, label: "Challenges", href: "/dashboard/challenges" },
         { icon: Utensils, label: "Meal Plans", href: "/dashboard/meal-plans" },
         { icon: ShoppingBag, label: "Store", href: "/dashboard/store" },
+        { icon: User, label: "Profile", href: "/dashboard/profile" },
     ];
 
     const handleLogout = () => {
@@ -83,8 +84,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     return (
         <SidebarProvider>
-            <div className="flex w-full h-screen bg-background">
-                <Sidebar className="bg-background">
+            <div className="flex w-full h-screen bg-neutral-950">
+                <Sidebar variant="floating" className="bg-neutral-950">
                     <SidebarHeader>
                         <div className="flex items-center gap-2 px-4 py-2">
                             <Avatar>
@@ -125,14 +126,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <Link href="/dashboard/profile">
-                                        <User className="mr-2 h-4 w-4" />
-                                        Profile
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
                                     <Button onClick={handleLogout} variant={"default"}>
                                         <LogOut className="mr-2 h-4 w-4" />
                                         Logout
@@ -155,21 +148,4 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
         </SidebarProvider>
     );
-}
-
-export async function getServerSideProps(context) {
-    // ... other server-side logic
-
-    const avatarUrl = await getCldImageUrl({
-        src: user?.avatarUrl || "",
-        width: 300,
-        height: 300,
-        crop: "fill",
-    });
-
-    return {
-        props: {
-            avatarUrl,
-        },
-    };
 }

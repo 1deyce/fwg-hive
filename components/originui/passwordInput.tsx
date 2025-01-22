@@ -62,6 +62,7 @@ export default function InputDemo({ password, setPassword }: InputDemoProps) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         aria-invalid={strengthScore < 4}
+                        min={8}
                         aria-describedby="password-strength"
                     />
                     <button

@@ -86,7 +86,7 @@ export default function UploadAvatar() {
     };
 
     return (
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-col justify-center bg-neutral-950">
             <FileUploadDropzone setFiles={setFiles} />
             <Button className="my-3 w-1/2 mx-auto" onClick={handleUpload}>
                 Update Avatar

@@ -76,7 +76,7 @@ export default function Login() {
     }, [token]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="min-h-screen flex items-center justify-center bg-neutral-950">
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle>Login to FWG Hive</CardTitle>
@@ -122,9 +122,9 @@ export default function Login() {
                                 </button>
                             </div>
                         </div>
-                        <CardFooter className="flex justify-between mt-6">
-                            <Button type="submit">Login</Button>
-                            <Button variant="outline" onClick={() => router.push("/signup")}>
+                        <CardFooter className="flex justify-center gap-8 mt-6">
+                            <Button className="bg-teal-600" type="submit">Login</Button>
+                            <Button variant="outline" className="text-neutral-950" onClick={() => router.push("/signup")}>
                                 Sign Up
                             </Button>
                         </CardFooter>
