@@ -1,15 +1,18 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import Image from "next/image";
+import Logo from "../public/fwg.jpg";
 
 export default function Home() {
     return (
-        <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white">
+        <div className="min-h-screen bg-gradient-to-r from-black to-neutral-950">
             <header className="container mx-auto px-4 py-8">
                 <nav className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-blue-600">Fitness Hub</h1>
+                    {/* <h1 className="text-3xl font-bold text-teal-600">FWG Hive</h1> */}
+                    <Image src={Logo} alt="Logo" width={100} height={100} />
                     <div className="space-x-4">
                         <Button variant="ghost" asChild>
                             <Link href="/login">Login</Link>
@@ -23,8 +26,8 @@ export default function Home() {
 
             <main className="container mx-auto px-4 py-16">
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl font-bold mb-4">Welcome to Fitness Hub</h2>
-                    <p className="text-xl text-gray-600 mb-8">
+                    <h2 className="text-4xl font-bold mb-4">Welcome to FWG Hive!</h2>
+                    <p className="text-xl text-gray-200 mb-8">
                         Your ultimate fitness companion for a healthier lifestyle
                     </p>
                     <Button size="lg" asChild>
