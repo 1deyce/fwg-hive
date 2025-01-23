@@ -31,41 +31,57 @@ export default function Login() {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        const response = await fetch("/api/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-        });
-
-        const data = await response.json();
-        const token = data.token;
-
-        if (response.ok) {
-            setToken(token);
-            setUser(data);
-            router.push("/dashboard");
-            toast({
-                variant: "default",
-                title: `Login successful, welcome back ${data.name}.`,
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
             });
-        } else {
-            console.error("An error occurred while logging in");
-            if (response.status === 400) {
+
+            const data = await response.json();
+
+            if (response.ok) {
+                const token = data.token;
+                setToken(token);
+                setUser(data);
+                router.push("/dashboard");
+
                 toast({
-                    variant: "destructive",
-                    title: "User not found, please sign up first or try again",
-                    action: <ToastAction altText="Try again">Try again</ToastAction>,
+                    variant: "default",
+                    title: `Login successful, welcome back ${data.name}.`,
                 });
-            } else if (response.status === 401) {
-                toast({
-                    variant: "destructive",
-                    title: "Invalid Password",
-                    description: "Please try again",
-                    action: <ToastAction altText="Try again">Try again</ToastAction>,
-                });
+            } else {
+                console.error("An error occurred while logging in:", data.error || "Unknown error");
+                if (response.status === 400) {
+                    toast({
+                        variant: "destructive",
+                        title: "User not found, please sign up first or try again",
+                        action: <ToastAction altText="Try again">Try again</ToastAction>,
+                    });
+                } else if (response.status === 401) {
+                    toast({
+                        variant: "destructive",
+                        title: "Invalid Password",
+                        description: "Please try again",
+                        action: <ToastAction altText="Try again">Try again</ToastAction>,
+                    });
+                } else {
+                    toast({
+                        variant: "destructive",
+                        title: "Login failed",
+                        description: data.error || "An unexpected error occurred.",
+                    });
+                }
             }
+        } catch (error) {
+            console.error("Error during login:", error);
+            toast({
+                variant: "destructive",
+                title: "Login failed",
+                description: "An error occurred, please try again later.",
+            });
         }
     };
 
@@ -123,8 +139,14 @@ export default function Login() {
                             </div>
                         </div>
                         <CardFooter className="flex justify-center gap-8 mt-6">
-                            <Button className="bg-teal-600" type="submit">Login</Button>
-                            <Button variant="outline" className="text-neutral-950" onClick={() => router.push("/signup")}>
+                            <Button className="bg-teal-600" type="submit">
+                                Login
+                            </Button>
+                            <Button
+                                variant="outline"
+                                className="text-neutral-950"
+                                onClick={() => router.push("/signup")}
+                            >
                                 Sign Up
                             </Button>
                         </CardFooter>
